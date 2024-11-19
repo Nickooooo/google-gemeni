@@ -4,16 +4,51 @@
   <title>Gemini Chatbot</title>
 </head>
 <body>
-  <div id="chat-container">
-    </div>
+  <div id="chat-container"></div>
   <form id="chat-form">
     <input type="text" id="chat-input" placeholder="Type your message">
     <button type="submit">Send</button>
   </form>
 
-  <script src="https://apis.google.com/js/api.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@google/gemini-client@latest"></script>
+
   <script>
-    // JavaScript code to interact with Gemini's API and update the chat interface
+    // API Key (replace with your own)
+    const apiKey = 'AIzaSyD_Q72GZUg-XO0m0sci5Kclw5XESu5s2nk';
+
+    // Create a Gemini client instance
+    const geminiClient = new GeminiClient({ apiKey });
+
+    const chatContainer = document.getElementById('chat-container');
+
+    // Function to display messages
+    function displayMessage(message, isUser) {
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('message');
+      messageElement.textContent = message;
+      if (isUser) {
+        messageElement.classList.add('user-message');
+      } else {
+        messageElement.classList.add('ai-message');
+      }
+      chatContainer.appendChild(messageElement);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // Handle chat form submission
+    const chatForm = document.getElementById('chat-form');
+    chatForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const userInput = document.getElementById('chat-input').value;
+      displayMessage(userInput, true);  // Display user message
+
+      // Send the user input to Gemini and get response
+      const response = await geminiClient.sendQuery(userInput);
+      displayMessage(response.text, false); // Display AI response
+
+      document.getElementById('chat-input').value = ''; // Clear input field
+    });
   </script>
 </body>
 </html>
